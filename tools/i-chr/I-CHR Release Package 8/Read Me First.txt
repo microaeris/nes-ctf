@@ -1,0 +1,44 @@
+	This program will take in a 16x16 grid aligned image (or image sequence) made with the NES background restrictions and output a ROM that displays the image as well as various NES friendly files. Files will be exported in a new folder created next to the input image.
+	
+	If there are things in the image that break specifications, it will mark them. Unfamiliar with NES restrictions? See "nesquickref.gif" or read my detailed post here: https://pixelation.org/index.php?topic=10784.msg115062#msg115062 You can also read under "Errors:" below to see what kinds of things get marked.
+	
+Basic use:
+	Drag your image on the .exe. It will create a folder next to the input image with either various NES friendly files or information about the errors. It will also open up a window so you can see your input and the errors. You can also use the hotkey Ctrl+O to choose a file while the program is running. Be aware that the exported files will be created immediately after loading the image(s).
+	
+	Input image(s) must be in the PNG format. They must have filenames increasing in number. ("example1.png", "example2.png", "example3.png"...) You must drag the first image in the sequence onto the program. (Or select the first image in the sequence in the file dialog.)
+	
+	Files will be exported to a new folder created next to the input image. It will have the same filename as the input image with an 'E' appended. "example1.png" will have "example1.pngE" created. To get a description of what gets exported see "Exported Files.txt".
+	
+	The program does try to match your colors to the NES palette included ("Assets/nespal.png"), but the mathematically closest color may not be what you'd pick. Use only the colors in the included palette file in your input image for best results. (Note: If you edit it, it MUST be 64 colors that correspond to the 64 NES indices.)
+	
+	Note: There is no unified NES palette, so your image is going to look different on every emulator (and every TV). See "Palette Woes.png" for examples of this. I wish I had better news, but that's just how it is.
+
+Errors:
+	Orange: There are more than 13 colors in the image. (The colors used the least are marked.)
+	Red: There are more than 4 colors in this 16x16 pixel region. (The colors used the least are marked.)
+	Blue: There are more than 4 colors in this 8x8 pixel region. (The colors used the least are marked.)
+	Green: This 16x16 pixel region had colors that did not match any of the four color palettes. (The colors outside the closest palette are marked.)
+	
+	Palette errors are displayed as text or marked on the palette itself.
+	
+	Errors are checked across frames. For example, if the top left 16x16 pixel area had only four colors in frame 1, and only four colors in frame 2, but they are DIFFERENT sets of four colors it will fail.
+	
+	Note: The program tries to guess the four separate 4 color palettes your image is using, but it may be possible to create an image the NES can display that the program won't be able to guess the palette for. It also does not try to get the fewest possible tiles or get the smallest possible palette. Once it finds one that works, it stops guessing. I think in a future release I will make it arrange your palette such that you get the least tiles. It didn't make too big a difference in my own images, but I have encountered some where tile counts are nearly doubled.
+	
+	In these cases, you can provide your own palette. See Advanced Use.txt
+	
+Keys:
+	Ctrl+O: Open a file dialog to load a new image (sequence). Feel free to try the included sample images.
+
+	R: Reload the image sequence. (For instance, if you have fixed some errors and want to recheck the same file.)
+	
+	Space: Toggle display of the errors.
+	
+	P: Pause/Unpause animation playback.
+	
+	Up/Down: Change the frame delay. (Press R to export a ROM with the changed frame rate.)
+	
+	Left/Right: Change the current frame.
+	
+Updates to this program can be found at: https://kasumi.itch.io/ichr
+My Twitter: https://twitter.com/kasumidirect

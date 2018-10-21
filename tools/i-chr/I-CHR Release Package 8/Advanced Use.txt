@@ -1,0 +1,9 @@
+	A palette file must be a PNG image with exactly 16 pixels. (It could be 16x1, or 4x4...) The first four pixels are the colors meant for palette 0, the next four pixels are the colors meant for palette 1, etc. The first pixel in each set of four pixels must match. I may support 13x1 images (where the universal color is contained just once) at some point. 
+	
+	To provide the palette file you have two options.
+		1. Have the file in the same directory as your source image and name it the same filename with "_palette.png" appended. (Example: "title1.png" and "title1_palette.png")
+		2. Provide it as the second argument on the command line.
+		
+	If the provided palette does not have a universal color, it will attempt to guess a palette instead. Otherwise it will use the provided palette.
+		
+	Be aware: An assumption the program makes is that any colors that are different in the source image should remain different in the destination image. If two different input colors are both closest to the same NES palette color, the one of the two that's closest will win and the one in second will be assigned a different color.

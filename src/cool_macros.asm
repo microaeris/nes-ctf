@@ -13,11 +13,11 @@ DMCFREQ			= $4010
 BUTTON_A		= %10000000
 BUTTON_B		= %01000000
 BUTTON_SEL		= %00100000
-BUTTON_START		= %00010000
+BUTTON_START	= %00010000
 BUTTON_UP		= %00001000
 BUTTON_DOWN		= %00000100
 BUTTON_LEFT		= %00000010
-BUTTON_RIGHT		= %00000001
+BUTTON_RIGHT	= %00000001
 
 OAM_BASE		= $200
 
@@ -233,7 +233,7 @@ OAM_BASE		= $200
 
 .macro ppu_write_8kbit source, index
 	ldy index		       ; Upper byte of VRAM Address
-	ldx #$00			; Lower byte of VRAM Address
+	ldx #$00               ; Lower byte of VRAM Address
 
 	bit PPUSTATUS
 	sty PPUADDR
@@ -245,7 +245,7 @@ OAM_BASE		= $200
 ; table in four chunks.
 
 :
-	lda source, x		   ; Offset within both source and dest.
+	lda source, x		        ; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
@@ -267,8 +267,8 @@ OAM_BASE		= $200
 .endmacro
 
 .macro ppu_write_32kbit source, index
-	ldy index		       ; Upper byte of VRAM Address
-	ldx #$00			; Lower byte of VRAM Address
+	ldy index		        ; Upper byte of VRAM Address
+	ldx #$00			    ; Lower byte of VRAM Address
 
 	bit PPUSTATUS
 	sty PPUADDR

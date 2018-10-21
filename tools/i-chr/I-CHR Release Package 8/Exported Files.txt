@@ -1,0 +1,49 @@
+Not all files are exported every time. The error images will not be exported if there are no errors, the CHR block and ROM file will not be exported if more than 256 tiles are needed, the ROM file will not be exported if the image requires more than eight unique screens.
+
+anim.bin:
+	Byte 0: Frame Count
+	Byte 1: Number of non animated 64 tile blocks.
+	Byte 2: Number of animated 64 tile blocks.
+	Byte 3: Game frames to wait before advancing animation frames.
+	
+anim.nes:
+	An animated ROM created with your input image(s). If your map was larger than 256x240, using the d-pad will show the next screen in that direction.
+	
+chrblock.chr:
+	All the 8x8 tiles used in the input image(s). First, each 64 block of non animated tiles. Then all the animated blocks for a single frame. Then all the animated blocks for the next frame.(So it's tiles 0-63 for frame 1, tiles 64-127 for frame 1, tiles 128-191 for frame 1, tiles 192-255 for frame 1, tiles 0-63 for frame 2... Rather than tiles 0-63 for frame 1, tiles 0-63 for frame 2 ... tiles 64-127 for frame 1, tiles 64-127 for frame 2 ...)
+	
+dim.bin:
+	Byte 1: The width of the map in screens. (256x240)
+	Byte 2: The height of the map in screens. (256x240)
+	
+errorX.png:
+	An image with only the marked pixels from your input. Useful because a "red" error could be overlaid over a red pixel making it hard to see. X represents a frame number. (Numbering starts at zero.)
+
+erroroverlayX.png
+	An image with the marked pixels overlaid over your input. Useful in case you want to check why there an error in the graphics editor of your choice. X represents a frame number. (Numbering starts at zero.)
+	
+guesspalette.png:
+	The palette the program guessed for your image. Useful in case you want to edit it yourself later for future input.
+	
+log.txt:
+	This file is in the program's directory rather than the folder for output. This may contain slightly more information about certain errors. 
+	
+nametableX.bin:
+	The tile numbers and attribute table (palette data) for each 256x240 section of your input image. nametable0.bin is the top left corner, and it goes from left to right, top to bottom from there.
+	
+nametableblock.bin:
+	All of the above nametable files smashed together in order as one file.
+	
+palette.pal:
+	A 16 byte file with the NES palette indices your image needs.
+	Byte 0: The universal Color in all palettes.
+	Byte 1: The first unique color in palette 0.
+	Byte 2: The second unique color in palette 0.
+	Byte 3: The third unique color in palette 0.
+	
+	Byte 4: The universal color in all palettes.
+	Byte 5: The first unique color in palette 1.
+	etc.
+	
+palettetileX.png:
+	When a palette is not provided, each time a 16x16 slice of your input image(s) uses exactly 4 colors and the set of four colors is different than previous sets of exactly 4 colors, the program will save the first frame of that 16x16 slice. This can be useful for identifying why the program claims there are more than four 4 color palettes. Remember that this only keeps track of tiles that use EXACTLY 4 colors, so it's possible to have an image where no palette tiles are exported even though the image uses all 13 colors available. Also remember that it counts colors across ALL frames, so the first frame may not have colors that look different from the other palette tiles.

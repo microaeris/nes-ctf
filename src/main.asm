@@ -7,20 +7,29 @@
 ; =============================
 .segment "ZEROPAGE"
 ; Fast variables
-temp:		.res 1
-temp2:		.res 1
-temp3:		.res 1
-temp4:		.res 1
-temp5:		.res 1
-temp6:		.res 1
-temp7:		.res 1
-temp8:		.res 1
-pad_1:		.res 1
-pad_1_prev:	.res 1
-pad_2:		.res 1
-pad_2_prev:	.res 1
+update_dma:		.res 1
+update_nmtbl:	.res 1
+update_palette:	.res 1
+update_ppu_reg:	.res 1
+temp5:			.res 1
+temp6:			.res 1
+temp7:			.res 1
+temp8:			.res 1
+temp9:			.res 1
+temp10:			.res 1
+temp11:			.res 1
+temp12:			.res 1
+pad_1:			.res 1
+pad_1_prev:		.res 1
+pad_2:			.res 1
+pad_2_prev:		.res 1
 
+; As recommended by the sample RAM map
+; https://wiki.nesdev.com/w/index.php/Sample_RAM_map
 .segment "RAM"
+shadow_nametable:	.res 160
+stack:				.res 96
+shadow_oam:			.res 256
 ; Flags for PPU control
 ppumask_config:	.res 1
 ppuctrl_config:	.res 1
@@ -40,6 +49,7 @@ yscroll:	.res 2
 ; ============================
 .segment "BANKF"
 .include "utils.asm"
+.include "draw_routines.asm"
 
 ; ============================
 ; NMI ISR
@@ -51,23 +61,62 @@ yscroll:	.res 2
 ;	jsr wait_nmi
 ; ============================
 nmi_vector:
-	pha				; Preseve A
+	pha					; Back up registers (important)
+	txa
+	pha
+	tya
+	pha
 	
 	lda #$00
 	sta PPUCTRL			; Disable NMI
 	sta vblank_flag
 
+	; ALICE FIXME - do stuff here 
+	lda update_dma
+	beq :+
+		lda #$0			; do sprite DMA
+		sta $2003		; conditional via the 'needdma' flag
+		lda #>oam
+		sta $4014
+
+:	lda update_nmtbl		; do other PPU drawing (NT/Palette/whathaveyou)
+	beq :+					; conditional via the 'update_nmtbl' flag
+		bit $2002			; clear VBl flag, reset $2005/$2006 toggle
+		jsr do_update_nmtbl	; draw the stuff from the drawing buffer
+		lda #$0
+		sta update_nmtbl
+
+:	lda update_ppu_reg
+	beq :+
+		lda soft2001	; copy buffered $2000/$2001 (conditional via needppureg)
+		sta $2001
+		lda soft2000
+		sta $2000
+
+		bit $2002
+		lda xscroll		; set X/Y scroll (conditional via needppureg)
+		sta $2005
+		lda yscroll
+		sta $2005
+
+
+
+						; Wait until current vblank is over
 	lda #$80			; Bit 7, VBlank activity flag
 @vbl_done:
-	bit PPUSTATUS			; Check if vblank has finished
-	bne @vbl_done			; Repeat until vblank is over
+	bit PPUSTATUS		; Check if vblank has finished
+	bne @vbl_done		; Repeat until vblank is over
 
 	lda #%10011011
 	sta PPUCTRL			; Re-enable NMI
-
-	pla				; Restore registers from stack
-
+	
+	pla					; Restore regs and exit
+	tay
+	pla
+	tax
+	pla
 	rti
+
 
 ; ============================
 ; IRQ ISR
@@ -83,16 +132,16 @@ irq_vector:
 
 reset_vector:
 ; Basic 6502 init, straight outta NESDev
-	sei				; ignore IRQs
-	cld				; No decimal mode, it isn't supported
+	sei					; ignore IRQs
+	cld					; No decimal mode, it isn't supported
 	ldx #%00000100
 	stx $4017			; Disable APU frame IRQ
 
 	ldx #$ff
-	txs				; Set up stack
+	txs				    ; Set up stack
 
 ; Clear some PPU registers
-	inx				; X = 0 now
+	inx					; X = 0 now
 	stx PPUCTRL			; Disable NMI
 	stx PPUMASK			; Disable rendering
 	stx DMCFREQ			; Disable DMC IRQs
@@ -179,7 +228,7 @@ main_entry:
 	ppu_write_32kbit sample_chr_data, #$00
 
 	; and for sprites, which start at $1000.
-	ppu_write_32kbit sample_chr_data + $1000, #$10
+	ppu_write_32kbit sample_chr_data, #$10
 
 	; Bring the PPU back up.
 	jsr wait_nmi
@@ -209,10 +258,10 @@ main_top_loop:
 
 ; The sample graphics resources.
 sample_chr_data:
-	.incbin "resources/chr.chr"
+	.incbin "resources/font_chrblock.chr"
 
 sample_palette_data:
-	.byte	$0F, $01, $23, $30
+	.byte	$0F, $1C, $2B, $3A
 	.byte	$0F, $01, $23, $30
 	.byte	$0F, $01, $23, $30
 	.byte	$0F, $01, $23, $30
@@ -222,8 +271,8 @@ sample_palette_data:
 ; These are needed to boot the NES.
 .segment "VECTORS"
 
-	.addr	nmi_vector	; Every vblank, this ISR is executed.
+	.addr	nmi_vector		; Every vblank, this ISR is executed.
 	.addr	reset_vector	; On bootup or reset, execution begins here.
-	.addr	irq_vector	; Triggered by external hardware in the
-				; game cartridge, this ISR is executed. A
-				; software break (BRK) will do it as well.
+	.addr	irq_vector		; Triggered by external hardware in the
+							; game cartridge, this ISR is executed. A
+							; software break (BRK) will do it as well.

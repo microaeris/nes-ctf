@@ -1,0 +1,21 @@
+Attempting to load font: Z:\home\ahris\grive\linux\development\nes-ctf\tools\i-chr\I-CHR Release Package 8\Fonts/ProggyClean.png
+Padding: 0
+Minimum Padding: 0
+Effective Set Size: 256
+Animated Tiles: 0
+Total Blocks: 4
+Animated Blocks: 0
+Non-animated Blocks: 4
+Tiles In CHR: 256
+Size of CHR to hack: 4096
+Failed to load any image.
+Make sure to use a PNG.
+Padding: 160
+Minimum Padding: 32
+Effective Set Size: 128
+Animated Tiles: 0
+Total Blocks: 2
+Animated Blocks: 0
+Non-animated Blocks: 2
+Tiles In CHR: 128
+Size of CHR to hack: 2048

@@ -1,0 +1,62 @@
+Error reporting could be a bit better. The error pixels are unscaled, so some may be hard to see. You can compare the error images that are saved to your original input but that's a little clunky.
+
+The greater than 13 color check is quite slow. Don't load a large photo, you'll regret it. 
+
+It doesn't sanitize filenames yet, so go nuts with your "%d.png" files.
+
+There's no way to load a new palette while the program is running. (One can be specified in the commandline, but only images with an accompanying "_palette.png" file work when using the file dialog.) Ideally it should notice when an image is exactly 16 pixels (which is too small to export tiles for anyway) it should replace the current palette.
+
+It would also be nice if the program recognized when a "X_palette.png" file was loaded and then load the appropriate "X.png" file with it.
+
+Brute forcing palette arrangements to get the lowest possible tile count is a priority, I suppose. Brute forcing palette arrangements to find possible palettes isn't. 
+
+It'd be nice the program checked for duplicate frames in the animated CHR blocks and didn't export those twice.
+
+Will you add a command line switch so this doesn't open a window (for a build process with multiple files)?
+	Probably in the next release. 
+
+Will you add scrollbars so large images don't push important information outside of a small window?
+	Probably in the next release.
+
+Will you support platforms besides NES?
+	Maybe? The code can check for less than Z colors in arbitrary X by Y regions, as well as if given areas of an image are outside a global palette (or divided sections of a palette). I may expose that functionality, but I really don't want to spend time exporting data/ROMs for platforms I currently know nothing about. 
+	
+How about 8x8 palette regions like MMC5?
+	Not until I need it for myself. Don't hold your breath.
+	
+Will you support making NES ROMs of maps larger than 8 total screens?
+	Probably at some point. It shouldn't be too hard to do, I just didn't for the first release. 
+	
+Will you support making NES ROMs with smoother scrolling for images larger than 256x240 pixels?
+	Maybe?
+	
+Will you allow the user to specify a different block size for bank switching? (Like 128 tiles?)
+	Probably. The program can already do that, there's just no way for the user to change it.
+	
+Will you support images with > 256 tiles?
+	Unlikely any time soon. Really, not until I want it for myself. This also complicates things, especially when paired with scrolling.
+	
+Will you support image sequences with more than 255 frames?
+	Probably not. Potentially 256, but no higher. 256 is the limit of MMC3 bankswapping which is what this program was designed for. I went with 255 just to avoid adding some state to the ROM skeleton.
+	
+Will you support palette animation?
+	Maybe? I have code to turn arbitrary images into each other solely through palette changes, but it's less useful for me than the bank switching tile animation.
+	
+Will you support loading GIF/other animated formats instead of lots of PNG files?
+	Probably eventually. Animated formats tend to be difficult to read and write and I've yet to find a library I really like. A subset of Aseprite's .ase is most likely since I already have some code around for that.
+	
+Will you support images that use sprite overlays?
+	I'm thinking about it. It's not the easiest engineering problem.
+	
+I tried an actual NES map and got errors! What happened?
+	Maybe the map wasn't grid aligned, maybe the map had sprites in it, maybe the image had color artifacts from compression, maybe the game changes the palette mid level so the image had more than four color palettes. You should not expect to grab a random image from online and have it just work.
+	
+Why is it so CPU intensive? Why is it so slow to render? Why is it not consistently 60FPS?
+	This is NOT TIGR's fault! The program is software rendering everything, then copying it for TIGR to draw. It's touching every pixel in the window at least twice every frame in a not hardware accelerated way before TIGR even does anything. (So making the window smaller helps a lot.) The draw functions are also slow because they're doing a lot of math for things not used here. I'll eventually make fast versions of them, but this was meant more as a commandline application with light graphical output than a full GUI program.
+	
+	
+This program relies on:
+	Bisqwit's palette generator - https://bisqwit.iki.fi/utils/nespalette.php
+	LodePNG (For loading PNG files) - http://lodev.org/lodepng/
+	TIGR (For displaying the Window) - https://bitbucket.org/rmitton/tigr/src
+	tiny file dialogs (For opening the load file dialog) - https://sourceforge.net/projects/tinyfiledialogs/
