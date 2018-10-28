@@ -280,83 +280,103 @@ OAM_BASE		= $200
 ; table in four chunks.
 
 :
-	lda source, x		   ; Offset within both source and dest.
+	lda source, x			; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $100, x	    ; Offset within both source and dest.
+	lda source + $100, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $200, x	    ; Offset within both source and dest.
+	lda source + $200, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $300, x	    ; Offset within both source and dest.
+	lda source + $300, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $400, x	    ; Offset within both source and dest.
+	lda source + $400, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $500, x	    ; Offset within both source and dest.
+	lda source + $500, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $600, x	    ; Offset within both source and dest.
+	lda source + $600, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $700, x	    ; Offset within both source and dest.
+	lda source + $700, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $800, x	    ; Offset within both source and dest.
+	lda source + $800, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $900, x	    ; Offset within both source and dest.
+	lda source + $900, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $a00, x	    ; Offset within both source and dest.
+	lda source + $a00, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $b00, x	    ; Offset within both source and dest.
+	lda source + $b00, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $c00, x	    ; Offset within both source and dest.
+	lda source + $c00, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $d00, x	    ; Offset within both source and dest.
+	lda source + $d00, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $e00, x	    ; Offset within both source and dest.
+	lda source + $e00, x 		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
 :
-	lda source + $f00, x	    ; Offset within both source and dest.
+	lda source + $f00, x		; Offset within both source and dest.
 	sta PPUDATA
 	inx
 	bne :-
+.endmacro
+
+; Prepare the stack and registers for a new function call
+; Save all of the registers onto the stack
+.macro func_prologue
+	pha					; Back up registers (important)
+	txa
+	pha
+	tya
+	pha
+.endmacro
+
+; Prepare the stack and registers to leave a function call
+; Pop all of the registers from the stack
+.macro func_epilogue
+	pla					; Restore regs and exit
+	tay
+	pla
+	tax
+	pla
 .endmacro
